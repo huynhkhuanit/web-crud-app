@@ -1,0 +1,40 @@
+{
+  "name": "web-crud-app",
+  "version": "1.0.0",
+  "description": "A web application for CRUD operations with modern interface and API testing",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "build": "echo 'Build completed'",
+    "test": "echo 'No tests specified'",
+    "postinstall": "cd backend && npm install"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "keywords": [
+    "crud",
+    "express",
+    "nodejs",
+    "api",
+    "postman",
+    "testing",
+    "web-application"
+  ],
+  "author": "Your Name <your.email@domain.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/web-crud-app.git"
+  },
+  "homepage": "https://github.com/your-username/web-crud-app#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}
