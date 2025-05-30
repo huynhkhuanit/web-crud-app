@@ -13,6 +13,7 @@ Một ứng dụng web CRUD (Create, Read, Update, Delete) hoàn chỉnh với g
 - [Sử dụng](#-sử-dụng)
 - [API Documentation](#-api-documentation)
 - [Deploy](#-deploy)
+- [Vercel Deployment](#-vercel-deployment)
 - [Testing với Postman](#-testing-với-postman)
 
 ## ✨ Tính năng
@@ -182,21 +183,67 @@ git push heroku main
 
 ### Vercel Deployment
 
-**1. Install Vercel CLI:**
-```bash
-npm install -g vercel
+### Cấu hình cho Vercel
+
+Project này đã được cấu hình để triển khai trên Vercel với cả frontend và backend.
+
+**Cấu hình `vercel.json`:**
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/$1"
+    }
+  ]
+}
 ```
 
-**2. Deploy:**
+### Tự động phát hiện môi trường
+
+API URLs được cấu hình động:
+- **Local Development:** `http://localhost:5000/api`
+- **Vercel Production:** `/api` (relative URL)
+
+### Các bước deploy:
+
+1. **Cài đặt Vercel CLI:**
 ```bash
-vercel
+npm i -g vercel
 ```
 
-### Railway Deployment
+2. **Login vào Vercel:**
+```bash
+vercel login
+```
 
-**1. Connect GitHub repo to Railway**
-**2. Set environment variables**
-**3. Deploy automatically**
+3. **Deploy project:**
+```bash
+vercel --prod
+```
+
+### Live Demo
+🌐 **URL:** [https://web-crud-app.vercel.app/](https://web-crud-app.vercel.app/)
+
+### Lưu ý quan trọng:
+- API sử dụng mock data (không cần database)
+- CORS đã được cấu hình cho Vercel domain
+- Frontend tự động detect environment và sử dụng URL phù hợp
 
 ## 🧪 Testing với Postman
 

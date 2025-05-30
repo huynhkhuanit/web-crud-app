@@ -1,4 +1,14 @@
-const apiUrl = 'http://localhost:5000/api/data';
+// Dynamic API URL that works for both local and Vercel deployment
+const getApiUrl = () => {
+    // If running on localhost, use localhost
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:5000/api/data';
+    }
+    // If running on Vercel or any other production domain, use relative URL
+    return '/api/data';
+};
+
+const apiUrl = getApiUrl();
 
 // Global variables
 let currentData = [];
