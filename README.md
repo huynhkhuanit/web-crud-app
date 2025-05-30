@@ -214,25 +214,64 @@ Project này đã được cấu hình để triển khai trên Vercel với c�
 }
 ```
 
+### 🗄️ Database Configuration (MongoDB Atlas)
+
+**Vấn đề Serverless Functions:**
+- Vercel functions bị restart sau vài phút không hoạt động
+- Data trong memory sẽ bị mất → Cần database persistent
+
+**Setup MongoDB Atlas (FREE):**
+
+1. **Tạo account tại [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)**
+
+2. **Tạo cluster mới:**
+   - Chọn FREE tier (M0)
+   - Chọn region gần nhất
+   - Tạo database user & password
+
+3. **Lấy Connection String:**
+   ```
+   mongodb+srv://username:password@cluster.mongodb.net/web-crud-app?retryWrites=true&w=majority
+   ```
+
+4. **Cấu hình Vercel Environment Variables:**
+   ```bash
+   # Trên Vercel dashboard
+   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/web-crud-app
+   NODE_ENV=production
+   ```
+
 ### Tự động phát hiện môi trường
 
 API URLs được cấu hình động:
 - **Local Development:** `http://localhost:5000/api`
 - **Vercel Production:** `/api` (relative URL)
 
+**Database Fallback:**
+- **✅ Có MongoDB:** Sử dụng persistent storage
+- **❌ Không có MongoDB:** Fallback to mock data (sẽ bị reset)
+
 ### Các bước deploy:
 
-1. **Cài đặt Vercel CLI:**
+1. **Setup MongoDB Atlas & get connection string**
+
+2. **Cài đặt Vercel CLI:**
 ```bash
 npm i -g vercel
 ```
 
-2. **Login vào Vercel:**
+3. **Login vào Vercel:**
 ```bash
 vercel login
 ```
 
-3. **Deploy project:**
+4. **Set environment variables:**
+```bash
+vercel env add MONGODB_URI
+# Paste your MongoDB connection string
+```
+
+5. **Deploy project:**
 ```bash
 vercel --prod
 ```
@@ -241,7 +280,8 @@ vercel --prod
 🌐 **URL:** [https://web-crud-app.vercel.app/](https://web-crud-app.vercel.app/)
 
 ### Lưu ý quan trọng:
-- API sử dụng mock data (không cần database)
+- ✅ **Với MongoDB:** Data persistent, không bị mất khi restart
+- ❌ **Không có MongoDB:** Sử dụng mock data, reset sau mỗi cold start
 - CORS đã được cấu hình cho Vercel domain
 - Frontend tự động detect environment và sử dụng URL phù hợp
 

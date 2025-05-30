@@ -3,18 +3,33 @@ const mongoose = require('mongoose');
 const dataSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     description: {
         type: String,
-        required: true
+        default: '',
+        trim: true
     },
     createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
         type: Date,
         default: Date.now
     }
 });
 
-const DataModel = mongoose.model('Data', dataSchema);
+// Auto-update updatedAt field
+dataSchema.pre('save', function(next) {
+    this.updatedAt = new Date();
+    next();
+});
 
-module.exports = DataModel;
+dataSchema.pre('findOneAndUpdate', function(next) {
+    this.set({ updatedAt: new Date() });
+    next();
+});
+
+module.exports = mongoose.model('Data', dataSchema);
