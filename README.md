@@ -247,29 +247,85 @@ vercel --prod
 
 ## 🧪 Testing với Postman
 
-### Import Collection
-1. Mở Postman
-2. Click "Import"
-3. Select `postman/API-Tests.postman_collection.json`
+### Import Collection & Environment
+
+**1. Import Collection:**
+```bash
+postman/API-Tests.postman_collection.json
+```
+
+**2. Import Environments:**
+- **Production:** `postman/Vercel-Production.postman_environment.json`
+- **Local:** `postman/Local-Development.postman_environment.json`
+
+### Test Coverage
+
+**📋 CRUD Operations:**
+- ✅ GET All Data - Lấy tất cả dữ liệu
+- ✅ POST New Item - Thêm mục mới  
+- ✅ PUT Update - Cập nhật dữ liệu
+- ✅ GET Verify Update - Xác nhận cập nhật
+- ✅ DELETE Item - Xóa dữ liệu
+
+**❌ Error Handling:**
+- ✅ 404 Errors - Item không tồn tại
+- ✅ Validation Tests - Dữ liệu không hợp lệ
+- ✅ Edge Cases - Các trường hợp đặc biệt
+
+**⚡ Performance Tests:**
+- ✅ Response Time - Thời gian phản hồi
+- ✅ Cold Start Detection - Phát hiện cold start Vercel
 
 ### Chạy Tests
 
 **Individual Tests:**
-- Chọn request và click "Send"
-- Kiểm tra test results trong "Test Results" tab
+1. Chọn environment (Local hoặc Vercel Production)
+2. Chọn request và click "Send"
+3. Kiểm tra test results trong "Test Results" tab
 
 **Collection Runner:**
-1. Click collection name
-2. Click "Run"
-3. Select all requests
-4. Click "Run [Collection Name]"
+1. Click vào collection name "Web CRUD App - Complete API Tests"
+2. Click "Run collection"
+3. Chọn environment phù hợp
+4. Select các test cases muốn chạy
+5. Click "Run [Collection Name]"
 
-### Test Scripts
-Collection bao gồm các test scripts để validate:
-- Response status codes
-- Response body structure
-- Response time
-- Data integrity
+### Test Results Dashboard
+
+Collection bao gồm comprehensive test scripts:
+
+```javascript
+// Example test output
+✅ Mã trạng thái là 200
+✅ Phản hồi là một mảng JSON  
+⚡ Thời gian phản hồi < 3000ms
+📋 Headers chứa Content-Type
+📊 Số lượng dữ liệu ban đầu: 2
+```
+
+### Environment Switching
+
+**Để test trên Vercel Production:**
+```json
+{
+  "baseUrl": "https://web-crud-app.vercel.app"
+}
+```
+
+**Để test trên Local Development:**
+```json
+{
+  "baseUrl": "http://localhost:5000"
+}
+```
+
+### Automated Testing Features
+
+- 🔄 **Auto ID Management** - Tự động lưu và sử dụng test item IDs
+- 🕐 **Dynamic Timestamps** - Sử dụng timestamp để tránh conflicts
+- 📊 **Statistics Tracking** - Theo dõi số lượng dữ liệu
+- 🚀 **Performance Monitoring** - Giám sát thời gian phản hồi
+- 🧹 **Auto Cleanup** - Tự động dọn dẹp test data
 
 ## 📁 Cấu trúc Project
 

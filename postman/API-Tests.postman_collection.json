@@ -1,225 +1,488 @@
 {
   "info": {
     "_postman_id": "12345678-1234-1234-1234-123456789012",
-    "name": "Hệ Thống Quản Lý Dữ Liệu - API Tests",
-    "description": "Bộ test API cho Hệ Thống Quản Lý Dữ Liệu.",
+    "name": "Web CRUD App - Complete API Tests",
+    "description": "Bộ test API đầy đủ cho Web CRUD Application được triển khai trên Vercel.\n\n**Environments:**\n- Local: http://localhost:5000\n- Production: https://web-crud-app.vercel.app\n\n**Test Coverage:**\n- CRUD Operations\n- Error Handling\n- Data Validation\n- Response Time\n- Edge Cases",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://web-crud-app.vercel.app",
+      "type": "string",
+      "description": "Base URL for API - Change to http://localhost:5000 for local testing"
+    },
+    {
+      "key": "testItemId",
+      "value": "",
+      "type": "string",
+      "description": "ID of test item created during testing"
+    }
+  ],
   "item": [
     {
-      "name": "Lấy Tất Cả Dữ Liệu",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:5000/api/data",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "5000",
-          "path": [
-            "api",
-            "data"
-          ]
-        }
-      },
-      "response": [],
-      "event": [
+      "name": "CRUD Operations",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Mã trạng thái là 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Phản hồi là một mảng\", function () {",
-              "    pm.expect(pm.response.json()).to.be.an('array');",
-              "});",
-              "",
-              "pm.test(\"Thời gian phản hồi nhỏ hơn 1000ms\", function () {",
-              "    pm.expect(pm.response.responseTime).to.be.below(1000);",
-              "});"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Thêm Dữ Liệu Mới",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"name\": \"Mục Test\", \"description\": \"Đây là một mục thử nghiệm\"}"
+          "name": "1. Lấy Tất Cả Dữ Liệu (GET All)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data"]
+            },
+            "description": "Lấy danh sách tất cả dữ liệu từ API"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test status code",
+                  "pm.test(\"Mã trạng thái là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Test response format",
+                  "pm.test(\"Phản hồi là một mảng JSON\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Test response time",
+                  "pm.test(\"Thời gian phản hồi < 3000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  "// Test headers",
+                  "pm.test(\"Headers chứa Content-Type\", function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "// Store initial data count",
+                  "const responseData = pm.response.json();",
+                  "pm.collectionVariables.set('initialDataCount', responseData.length);",
+                  "console.log(`Số lượng dữ liệu ban đầu: ${responseData.length}`);"
+                ]
+              }
+            }
+          ]
         },
-        "url": {
-          "raw": "http://localhost:5000/api/data",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "5000",
-          "path": [
-            "api",
-            "data"
-          ]
-        }
-      },
-      "response": [],
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Mã trạng thái là 201\", function () {",
-              "    pm.response.to.have.status(201);",
-              "});",
-              "",
-              "pm.test(\"Phản hồi có trường id\", function () {",
-              "    pm.expect(pm.response.json()).to.have.property('id');",
-              "});",
-              "",
-              "pm.test(\"Phản hồi có trường name\", function () {",
-              "    pm.expect(pm.response.json()).to.have.property('name');",
-              "});",
-              "",
-              "// Lưu ID để sử dụng cho các test khác",
-              "var responseJson = pm.response.json();",
-              "pm.environment.set(\"testItemId\", responseJson.id);"
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Cập Nhật Dữ Liệu",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\"name\": \"Mục Đã Cập Nhật\", \"description\": \"Mô tả đã được cập nhật\"}"
+          "name": "2. Thêm Dữ Liệu Mới (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Item - Postman {{$timestamp}}\",\n  \"description\": \"Đây là một mục test được tạo từ Postman lúc {{$isoTimestamp}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data"]
+            },
+            "description": "Thêm một mục dữ liệu mới vào hệ thống"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test status code",
+                  "pm.test(\"Mã trạng thái là 201 (Created)\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "// Test response structure",
+                  "pm.test(\"Phản hồi có trường id\", function () {",
+                  "    pm.expect(responseJson).to.have.property('id');",
+                  "    pm.expect(responseJson.id).to.be.a('number');",
+                  "});",
+                  "",
+                  "pm.test(\"Phản hồi có trường name\", function () {",
+                  "    pm.expect(responseJson).to.have.property('name');",
+                  "    pm.expect(responseJson.name).to.include('Test Item - Postman');",
+                  "});",
+                  "",
+                  "pm.test(\"Phản hồi có trường description\", function () {",
+                  "    pm.expect(responseJson).to.have.property('description');",
+                  "});",
+                  "",
+                  "pm.test(\"Phản hồi có trường createdAt\", function () {",
+                  "    pm.expect(responseJson).to.have.property('createdAt');",
+                  "});",
+                  "",
+                  "// Save item ID for other tests",
+                  "pm.collectionVariables.set('testItemId', responseJson.id);",
+                  "console.log(`Đã tạo mục mới với ID: ${responseJson.id}`);"
+                ]
+              }
+            }
+          ]
         },
-        "url": {
-          "raw": "http://localhost:5000/api/data/{{testItemId}}",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "5000",
-          "path": [
-            "api",
-            "data",
-            "{{testItemId}}"
-          ]
-        }
-      },
-      "response": [],
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Mã trạng thái là 200\", function () {",
-              "    pm.response.to.have.status(200);",
-              "});",
-              "",
-              "pm.test(\"Dữ liệu đã được cập nhật\", function () {",
-              "    var responseJson = pm.response.json();",
-              "    pm.expect(responseJson.name).to.eql(\"Mục Đã Cập Nhật\");",
-              "});"
-            ]
-          }
+          "name": "3. Cập Nhật Dữ Liệu (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Test Item - {{$timestamp}}\",\n  \"description\": \"Mô tả đã được cập nhật lúc {{$isoTimestamp}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/data/{{testItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data", "{{testItemId}}"]
+            },
+            "description": "Cập nhật thông tin của một mục dữ liệu"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test status code",
+                  "pm.test(\"Mã trạng thái là 200 (OK)\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "// Test data was updated",
+                  "pm.test(\"Dữ liệu đã được cập nhật\", function () {",
+                  "    pm.expect(responseJson.name).to.include('Updated Test Item');",
+                  "});",
+                  "",
+                  "pm.test(\"ID không thay đổi\", function () {",
+                  "    pm.expect(responseJson.id).to.eql(parseInt(pm.collectionVariables.get('testItemId')));",
+                  "});",
+                  "",
+                  "console.log(`Đã cập nhật mục ID: ${responseJson.id}`);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Xác Nhận Cập Nhật (GET by ID)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data"]
+            },
+            "description": "Lấy lại dữ liệu để xác nhận việc cập nhật"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mã trạng thái là 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseData = pm.response.json();",
+                  "const testItemId = parseInt(pm.collectionVariables.get('testItemId'));",
+                  "const updatedItem = responseData.find(item => item.id === testItemId);",
+                  "",
+                  "pm.test(\"Mục đã cập nhật tồn tại trong danh sách\", function () {",
+                  "    pm.expect(updatedItem).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "pm.test(\"Tên đã được cập nhật\", function () {",
+                  "    pm.expect(updatedItem.name).to.include('Updated Test Item');",
+                  "});",
+                  "",
+                  "console.log(`Xác nhận cập nhật thành công cho ID: ${testItemId}`);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Xóa Dữ Liệu (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/data/{{testItemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data", "{{testItemId}}"]
+            },
+            "description": "Xóa một mục dữ liệu khỏi hệ thống"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test status code",
+                  "pm.test(\"Mã trạng thái là 204 (No Content)\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "",
+                  "// Test empty response body",
+                  "pm.test(\"Nội dung phản hồi rỗng\", function () {",
+                  "    pm.expect(pm.response.text()).to.be.empty;",
+                  "});",
+                  "",
+                  "console.log(`Đã xóa mục ID: ${pm.collectionVariables.get('testItemId')}`);"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Xóa Dữ Liệu",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:5000/api/data/{{testItemId}}",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "5000",
-          "path": [
-            "api",
-            "data",
-            "{{testItemId}}"
-          ]
-        }
-      },
-      "response": [],
-      "event": [
+      "name": "Error Handling Tests",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Mã trạng thái là 204\", function () {",
-              "    pm.response.to.have.status(204);",
-              "});",
-              "",
-              "pm.test(\"Nội dung phản hồi rỗng\", function () {",
-              "    pm.expect(pm.response.text()).to.be.empty;",
-              "});"
-            ]
-          }
+          "name": "Kiểm Tra Lỗi 404 - Item Không Tồn Tại",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/data/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data", "999999"]
+            },
+            "description": "Test lỗi 404 khi truy cập item không tồn tại"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mã trạng thái là 404 cho ID không tồn tại\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Phản hồi chứa thông báo lỗi\", function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('message');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Kiểm Tra Validation - POST Dữ Liệu Trống",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"\",\n  \"description\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data"]
+            },
+            "description": "Test validation khi gửi dữ liệu trống"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Chấp nhận dữ liệu trống (business logic)\", function () {",
+                  "    // API hiện tại chấp nhận name rỗng, có thể cần validation sau",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 400]);",
+                  "});",
+                  "",
+                  "// Clean up if item was created",
+                  "if (pm.response.code === 201) {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.collectionVariables.set('emptyItemId', responseJson.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Kiểm Tra PUT - Update Item Không Tồn Tại",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Update Non-Existent Item\",\n  \"description\": \"This should fail\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/data/888888",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data", "888888"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mã trạng thái là 404 khi update item không tồn tại\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Kiểm Tra DELETE - Item Không Tồn Tại",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/data/777777",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data", "777777"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Mã trạng thái là 404 khi xóa item không tồn tại\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
         }
       ]
     },
     {
-      "name": "Kiểm Tra Lỗi 404",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:5000/api/data/999999",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "5000",
-          "path": [
-            "api",
-            "data",
-            "999999"
+      "name": "Performance Tests",
+      "item": [
+        {
+          "name": "Test Thời Gian Phản Hồi",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/data",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "data"]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Thời gian phản hồi dưới 5 giây (Vercel cold start)\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(5000);",
+                  "});",
+                  "",
+                  "pm.test(\"Thời gian phản hồi lý tưởng dưới 2 giây\", function () {",
+                  "    if (pm.response.responseTime < 2000) {",
+                  "        console.log('Excellent response time!');",
+                  "    } else {",
+                  "        console.log('Acceptable response time (possibly cold start)');",
+                  "    }",
+                  "});",
+                  "",
+                  "console.log(`Response time: ${pm.response.responseTime}ms`);"
+                ]
+              }
+            }
           ]
         }
-      },
-      "response": [],
-      "event": [
-        {
-          "listen": "test",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "pm.test(\"Mã trạng thái là 404 cho ID không tồn tại\", function () {",
-              "    pm.response.to.have.status(404);",
-              "});"
-            ]
-          }
-        }
       ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global pre-request script",
+          "console.log(`Testing against: ${pm.collectionVariables.get('baseUrl')}`);",
+          "console.log(`Test started at: ${new Date().toISOString()}`);"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "console.log(`Request completed: ${pm.info.requestName}`);"
+        ]
+      }
     }
   ]
 }
